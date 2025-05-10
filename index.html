@@ -33,59 +33,85 @@
                 <label>Visualization:</label>
                 <button id="toggle-visualization">Show Step by Step</button>
                 <button id="reset-visualization">Reset Visualization</button>
+                <button id="show-history">Show Visit History</button>
             </div>
         </div>
         
-        <div class="maze-container">
-            <div class="maze-panel">
-                <div id="maze" class="maze"></div>
-                
-                <div class="right-panel">
-                    <div class="legend">
-                        <h3>Legend</h3>
-                        <div class="legend-item">
-                            <div class="legend-color start"></div>
-                            <span>Start</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color end"></div>
-                            <span>End</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color wall"></div>
-                            <span>Wall</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color path"></div>
-                            <span>Path</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color solution"></div>
-                            <span>Solution</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color current"></div>
-                            <span>Current Cell</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stats">
-                        <h3>Statistics</h3>
-                        <div id="stats-content">
-                            No maze solved yet.
-                        </div>
-                    </div>
-                    
-                    <div class="algorithm-panel">
-                        <h3>Algorithms Used</h3>
-                        <p><strong>Backtracking:</strong> Used to solve the maze by exploring all possible paths from the start to the end, backtracking when hitting a dead end.</p>
-                        <p><strong>Divide and Conquer:</strong> Splits the maze into sub-grids to solve them separately and then combines the solutions. Used automatically for larger mazes (10x10 and above).</p>
-                        <div id="algorithm-explanation">Ready to solve a maze!</div>
-                    </div>
+       <div class="maze-container">
+    <!-- Main maze panel with centered maze grid and right panel -->
+    <div class="maze-panel">
+        <!-- New container grouping maze and its solution log -->
+        <div class="maze-solution-container">
+            <div id="maze" class="maze"></div>
+            
+            <!-- Solution log moved directly below the maze grid -->
+            <div class="solution-log">
+                <h3>Solution Steps Log</h3>
+                <div id="solution-log-content" class="log-content"></div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="legend">
+                <h3>Legend</h3>
+                <div class="legend-item">
+                    <div class="legend-color start"></div>
+                    <span>Start</span>
                 </div>
+                <div class="legend-item">
+                    <div class="legend-color end"></div>
+                    <span>End</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color wall"></div>
+                    <span>Wall</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color path"></div>
+                    <span>Path</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color solution"></div>
+                    <span>Solution</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color current"></div>
+                    <span>Current Cell</span>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <h3>Statistics</h3>
+                <div id="stats-content">
+                    No maze solved yet.
+                </div>
+            </div>
+            
+            <div class="algorithm-panel">
+                <h3>Algorithms Used</h3>
+                <p><strong>Backtracking:</strong> Used to solve the maze by exploring all possible paths from the start to the end, backtracking when hitting a dead end.</p>
+                <p><strong>Divide and Conquer:</strong> For larger mazes (10x10+), this algorithm:
+                    <ul>
+                        <li>Divides the maze into smaller sections</li>
+                        <li>Creates strategic checkpoints between start and end</li>
+                        <li>Solves each section independently</li>
+                        <li>Combines the solutions for better performance</li>
+                    </ul>
+                </p>
+                <div id="algorithm-explanation">Ready to solve a maze!</div>
             </div>
         </div>
     </div>
+    
+    <!-- Visit history dialog - appears when toggled -->
+    <div id="history-dialog" class="history-dialog">
+        <div class="dialog-header">
+            <h3>Cell Visit History</h3>
+            <button class="close-button" onclick="toggleHistoryDialog()">×</button>
+        </div>
+        <div class="history-grid" id="history-grid"></div>
+    </div>
+</div>
 
     <!-- Import algorithm scripts -->
     <script src="backtracking.js"></script>

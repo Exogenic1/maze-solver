@@ -10,6 +10,7 @@ let backtrackCount = 0;
 let isVisualizationActive = false;
 let visualizationInterval = null;
 let visualizationSpeed = 100; // ms per step
+let visitedHistory = new Set(); // Add this with other main variables
 
 // DOM Elements cache - improves performance by avoiding repeated DOM lookups
 const elements = {
@@ -21,7 +22,10 @@ const elements = {
     toggleVisualizationBtn: document.getElementById('toggle-visualization'),
     resetVisualizationBtn: document.getElementById('reset-visualization'),
     statsContent: document.getElementById('stats-content'),
-    algorithmExplanation: document.getElementById('algorithm-explanation')
+    algorithmExplanation: document.getElementById('algorithm-explanation'),
+    solutionLog: document.getElementById('solution-log-content'),
+    historyDialog: document.getElementById('history-dialog'),
+    showHistoryBtn: document.getElementById('show-history'),
 };
 
 // Directions array for reuse - avoid recreating these objects repeatedly
@@ -45,6 +49,7 @@ function setupEventListeners() {
     elements.toggleVisualizationBtn.addEventListener('click', toggleVisualization);
     elements.resetVisualizationBtn.addEventListener('click', resetVisualization);
     elements.mazeSizeSelect.addEventListener('change', generateMaze);
+    elements.showHistoryBtn.addEventListener('click', toggleHistoryDialog);
 }
 
 // Manhattan distance calculator - memoized for performance
@@ -109,6 +114,7 @@ function generateMaze() {
     
     // Draw the maze
     renderMaze();
+    renderHistoryGrid();
     
     updateAlgorithmExplanation('Maze generated. Ready to solve!');
 }
@@ -650,9 +656,14 @@ function generateVisualizationStepsFromSolution() {
 function clearSolution() {
     solution = [];
     window.solutionMap = null; // Clear the solution map
+    visitedHistory.clear();
     resetVisualization();
     renderMaze();
+    renderHistoryGrid();
     updateAlgorithmExplanation('Solution cleared. Ready to solve again!');
+    if (elements.solutionLog) {
+        elements.solutionLog.innerHTML = '';
+    }
 }
 
 function toggleVisualization() {
@@ -718,6 +729,8 @@ function updateMazeForVisualization(step) {
     
     if (step.type === 'visit') {
         cells[cellIndex].classList.add('current');
+        visitedHistory.add(`${step.y},${step.x}`);
+        renderHistoryGrid();
         updateAlgorithmExplanation(`Exploring cell at (${step.y}, ${step.x})`);
     } else if (step.type === 'solution') {
         solution.push([step.y, step.x]);
@@ -728,6 +741,21 @@ function updateMazeForVisualization(step) {
         cells[cellIndex].classList.add('current');
         updateAlgorithmExplanation(`Backtracking from cell at (${step.y}, ${step.x})`);
     }
+
+    // Add logging functionality with cleaner format
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${step.type}`;
+    
+    if (step.type === 'visit') {
+        logEntry.textContent = `→ Exploring (${step.y}, ${step.x})`;
+    } else if (step.type === 'solution') {
+        logEntry.textContent = `✓ Found solution at (${step.y}, ${step.x})`;
+    } else if (step.type === 'backtrack') {
+        logEntry.textContent = `← Backtracking from (${step.y}, ${step.x})`;
+    }
+    
+    elements.solutionLog.appendChild(logEntry);
+    elements.solutionLog.scrollTop = elements.solutionLog.scrollHeight;
 }
 
 function stopVisualization() {
@@ -760,5 +788,38 @@ function updateStats() {
 function updateAlgorithmExplanation(text) {
     if (elements.algorithmExplanation) {
         elements.algorithmExplanation.innerHTML = text;
+    }
+}
+
+function renderHistoryGrid() {
+    const historyGrid = document.getElementById('history-grid');
+    if (!historyGrid) return;
+
+    const size = maze.length;
+    historyGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    historyGrid.innerHTML = '';
+
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'history-cell';
+            if (visitedHistory.has(`${i},${j}`)) {
+                cell.classList.add('visited');
+            }
+            if (isCellInSolution(i, j)) {
+                cell.classList.add('solution');
+            }
+            historyGrid.appendChild(cell);
+        }
+    }
+}
+
+function toggleHistoryDialog() {
+    const dialog = elements.historyDialog;
+    if (dialog.style.display === 'none' || !dialog.style.display) {
+        dialog.style.display = 'block';
+        renderHistoryGrid();
+    } else {
+        dialog.style.display = 'none';
     }
 }
