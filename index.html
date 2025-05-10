@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rat Maze Puzzle Solver</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Rat Maze Puzzle Solver</h1>
+        
+        <div class="maze-controls">
+            <div class="input-group">
+                <label for="maze-size">Maze Size:</label>
+                <select id="maze-size">
+                    <option value="5">5x5</option>
+                    <option value="8" selected>8x8</option>
+                    <option value="10">10x10</option>
+                    <option value="15">15x15</option>
+                    <option value="20">20x20</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Maze Actions:</label>
+                <button id="generate-maze">Generate Random Maze</button>
+                <button id="solve-maze">Solve Maze</button>
+                <button id="clear-solution">Clear Solution</button>
+            </div>
+            
+            <div class="input-group">
+                <label>Visualization:</label>
+                <button id="toggle-visualization">Show Step by Step</button>
+                <button id="reset-visualization">Reset Visualization</button>
+            </div>
+        </div>
+        
+        <div class="maze-container">
+            <div class="maze-panel">
+                <div id="maze" class="maze"></div>
+                
+                <div class="right-panel">
+                    <div class="legend">
+                        <h3>Legend</h3>
+                        <div class="legend-item">
+                            <div class="legend-color start"></div>
+                            <span>Start</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color end"></div>
+                            <span>End</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color wall"></div>
+                            <span>Wall</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color path"></div>
+                            <span>Path</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color solution"></div>
+                            <span>Solution</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color current"></div>
+                            <span>Current Cell</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats">
+                        <h3>Statistics</h3>
+                        <div id="stats-content">
+                            No maze solved yet.
+                        </div>
+                    </div>
+                    
+                    <div class="algorithm-panel">
+                        <h3>Algorithms Used</h3>
+                        <p><strong>Backtracking:</strong> Used to solve the maze by exploring all possible paths from the start to the end, backtracking when hitting a dead end.</p>
+                        <p><strong>Divide and Conquer:</strong> Splits the maze into sub-grids to solve them separately and then combines the solutions. Used automatically for larger mazes (10x10 and above).</p>
+                        <div id="algorithm-explanation">Ready to solve a maze!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import algorithm scripts -->
+    <script src="backtracking.js"></script>
+    <script src="dividenconq.js"></script>
+    <!-- Main script that connects everything -->
+    <script src="script.js"></script>
+</body>
+</html>
